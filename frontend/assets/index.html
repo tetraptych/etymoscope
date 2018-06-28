@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <title>Etymoscope</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico?v=2"/>
+
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="main.css">
+
+  <style>
+    .links line {
+      stroke: #999;
+      stroke-opacity: 0.6;
+    }
+
+    .node circle {
+      stroke: #fff;
+      stroke-width: 1.5px;
+    }
+
+    .node text {
+      pointer-events: none;
+      font: 10px sans-serif;
+    }
+    input,
+    canvas {
+      position: absolute;
+    }
+
+    #wordInput {
+      background: transparent;
+      border: none;
+      margin: 10px 384px;
+      width: 160px;
+      font-size: 18px;
+      padding: 6px;
+      text-align: center;
+    }
+
+    #submitButton {
+      background: transparent;
+      border: none;
+      font-size: 18px;
+      text-align: center;
+      margin: 10px 550px;
+      padding: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="row">
+      <form>
+        <input name="wordInput" id="wordInput" placeholder="Enter a word">
+        <input type="submit" id="submitButton" value="Search">
+      </form>
+      <div id="d3-container"></div>
+    </div>
+  </div>
+
+
+</body>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="script.js"></script>
+</html>

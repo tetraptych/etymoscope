@@ -1,0 +1,33 @@
+version: "2"
+
+services:
+    backend:
+      build:
+        context: ./backend
+        dockerfile: Dockerfile.backend
+      volumes:
+        # App files and config
+        - ./backend/config/uwsgi.ini:/etc/uwsgi/uwsgi.ini:ro
+        - ./backend/config/nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
+        - ./backend/app/main.py:/app/main.py:ro
+        # Library
+        - ./backend:/usr/local/lib/python3.6/site-packages/backend:ro
+        # Data
+        - ./data/:/app/data/:rw
+        # Linters and Tests
+        - ./backend/tests/:/app/tests:ro
+        # Entrypoint
+        - ./backend/config/entrypoint.sh:/entrypoint.sh:ro
+      ports:
+        - 8081:8081
+
+    frontend:
+      volumes:
+        - ./frontend/:/usr/src/app/:rw
+      build:
+        context: .
+        dockerfile: ./frontend/Dockerfile.frontend
+      ports:
+        - 8080:8080
+      command:
+        - node server.js

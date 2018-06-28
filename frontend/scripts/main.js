@@ -1,3 +1,5 @@
+var API_ROOT = "http://localhost"
+
 var width = 900
 var height = 900
 var color = d3.scaleOrdinal(d3.schemeCategory20);
@@ -37,7 +39,7 @@ function proxy_request(name) {
 
 function requestGraph(word, depth) {
   var request = new XMLHttpRequest();
-  var rootPath = "http://localhost:8081/api/"
+  var rootPath = API_ROOT + ":8081/api/"
   var uri = "?word=" + word + "&depth=" + depth; 
   console.log(rootPath + uri)
   request.open("GET", rootPath + uri, false);

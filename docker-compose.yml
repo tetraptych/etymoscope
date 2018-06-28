@@ -12,8 +12,6 @@ services:
         - ./backend/app/main.py:/app/main.py:ro
         # Library
         - ./backend:/usr/local/lib/python3.6/site-packages/backend:ro
-        # Data
-        - ./data/:/app/data/:rw
         # Linters and Tests
         - ./backend/tests/:/app/tests:ro
         # Entrypoint
@@ -21,13 +19,11 @@ services:
       ports:
         - 8081:8081
 
-    frontend:
+    web:
       volumes:
         - ./frontend/:/usr/src/app/:rw
       build:
-        context: .
-        dockerfile: ./frontend/Dockerfile.frontend
+        context: ./frontend
+        dockerfile: Dockerfile.web
       ports:
         - 8080:8080
-      command:
-        - node server.js

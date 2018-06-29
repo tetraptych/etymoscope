@@ -53,8 +53,12 @@ def get_local_network():
     depth = flask.request.args.get('depth')
     depth = 1 if depth is None else int(depth)
 
-    word_id = WORD_TO_ID_MAP[word]
+    # If the word is not found, return an empty graph.
+    if word not in WORD_TO_ID_MAP:
+        response = nx.readwrite.json_graph.node_link_data(nx.empty_graph())
+        return flask.jsonify(response)
 
+    word_id = WORD_TO_ID_MAP[word]
     # TODO: Avoid be more intelligent here regarding execution time.
     subgraph_ids = [word_id]
     for i in range(depth):

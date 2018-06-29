@@ -1,41 +1,11 @@
 var API_ROOT = "http://localhost"
 
 var width = 900
-var height = 900
+var height = 750
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var form = d3.select("form")
     .on("submit", function () { fetchAndDraw(this.wordInput.value, 2) });
-
-/*
-var tmp_graph = {
-  "nodes": [
-    {"id": "Myriel", "group": 1},
-    {"id": "Napoleon", "group": 1}
-  ],
-  "links": [
-    {"source": "Napoleon", "target": "Myriel", "value": 1}
-  ]
-}
-
-var tmp_graph2 = {
-  "nodes": [
-    {"id": "Myriel", "group": 1},
-    {"id": "Napoleon", "group": 1}
-  ],
-  "links": []
-}
-
-function proxy_request(name) {
-  if (name == 'tmp_graph') {
-    result = tmp_graph
-  }
-  else {
-    result = tmp_graph2
-  }
-  return result
-}
-*/
 
 function requestGraph(word, depth) {
   var request = new XMLHttpRequest();
@@ -47,14 +17,13 @@ function requestGraph(word, depth) {
   return JSON.parse(request.responseText)
 }
 
-function draw(graph){
+function draw(graph, word){
   d3.select("#d3-container")
     .append("svg")
     .attr("width", width)
     .attr("height", height)
 
   var svg = d3.select("svg")
-
 
   var simulation = d3.forceSimulation(graph.nodes)
       .force("link", d3.forceLink()
@@ -74,8 +43,6 @@ function draw(graph){
       .force("center", d3.forceCenter(width / 2, height / 2))
   ;
 
-  var activeNodes = []
-
   var link = svg.append("g")
     .attr("class", "links")
     .selectAll("line")
@@ -87,7 +54,8 @@ function draw(graph){
     .data(graph.nodes)
     .enter().append("g")
     .attr("class", "node")
-    .on("click", setActive);
+    .on("click", setActive)
+    .on("dblclick", openLink)
   
   node.append("circle")
     .attr("r", function (d) { return 6; })
@@ -101,14 +69,16 @@ function draw(graph){
     .attr("dy", ".35em")
     .text(function(d) { return d.word });
 
+  d3.selectAll(".node")
+    .filter(function(d) { return d.word === word })
+    .selectAll("circle")
+      .style("fill", "orange")
+
+  var activeNodes = []
+
   simulation
     .nodes(graph.nodes)
     .on("tick", ticked)
-
-  /*
-  simulation.force("link")
-    .links(graph.links);
-  */
 
   function ticked() {
     link
@@ -126,10 +96,16 @@ function draw(graph){
 
   function setActive(d, i) {
     activeNodes.push(d3.select(this).node())
+    /*
     d3.select(this).select("circle").transition()
       .duration(750)
       .attr("r", 16)
       .style("fill", "orange")
+    */
+  }
+
+  function openLink(d, i) {
+    window.open("http://etymonline.com/word/" + d.word, '_blank')
   }
 
   function dragstarted(d) {
@@ -154,7 +130,7 @@ function fetchAndDraw(word, depth) {
   d3.event.preventDefault()
   var graph = requestGraph(word, depth)
   d3.select("svg").remove()
-  draw(graph)
+  draw(graph, word)
 }
 
 fetchAndDraw("", 1);

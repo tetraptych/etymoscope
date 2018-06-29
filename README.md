@@ -1,3 +1,3 @@
 # etymoscope
 
-A simple tool to visualize relationships between word etymologies. 
+A simple tool to visualize relationships between etymologies.

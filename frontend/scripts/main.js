@@ -10,7 +10,7 @@ var form = d3.select("form")
 function requestGraph(word, depth) {
   var request = new XMLHttpRequest();
   var rootPath = API_ROOT + ":8081/api/"
-  var uri = "?word=" + word + "&depth=" + depth; 
+  var uri = "?word=" + word + "&depth=" + depth;
   console.log(rootPath + uri)
   request.open("GET", rootPath + uri, false);
   request.send();
@@ -56,7 +56,7 @@ function draw(graph, word){
     .attr("class", "node")
     .on("click", setActive)
     .on("dblclick", openLink)
-  
+
   node.append("circle")
     .attr("r", function (d) { return 6; })
     .attr("fill", function(d) { return color(d.group); })
@@ -127,7 +127,9 @@ function draw(graph, word){
 }
 
 function fetchAndDraw(word, depth) {
-  d3.event.preventDefault()
+  if (d3.event !== null) {
+    d3.event.preventDefault()
+  }
   var graph = requestGraph(word, depth)
   d3.select("svg").remove()
   draw(graph, word)

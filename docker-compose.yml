@@ -3,19 +3,20 @@ version: "2"
 services:
     backend:
       build:
-        context: ./backend
-        dockerfile: Dockerfile.backend
+        context: ./processing
+        dockerfile: Dockerfile.processing
       volumes:
         # App files and config
-        - ./backend/config/uwsgi.ini:/etc/uwsgi/uwsgi.ini:ro
-        - ./backend/config/nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
-        - ./backend/app/main.py:/app/main.py:ro
+        - ./processing/config/uwsgi.ini:/etc/uwsgi/uwsgi.ini:ro
+        - ./processing/config/nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
+        - ./processing/app/main.py:/app/main.py:ro
+        - ./processing/data:/app/data:rw
         # Library
-        - ./backend:/usr/local/lib/python3.6/site-packages/backend:ro
+        - ./processing:/usr/local/lib/python3.6/site-packages/processing:ro
         # Linters and Tests
-        - ./backend/tests/:/app/tests:ro
+        - ./processing/tests/:/app/tests:ro
         # Entrypoint
-        - ./backend/config/entrypoint.sh:/entrypoint.sh:ro
+        - ./processing/config/entrypoint.sh:/entrypoint.sh:ro
       ports:
         - 8081:8081
 

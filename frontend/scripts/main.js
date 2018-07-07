@@ -1,20 +1,53 @@
 var API_ROOT = "http://localhost"
+var S3_BUCKET = "https://s3-us-west-2.amazonaws.com/etymoscope-public/"
 
 var width = 900
 var height = 750
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
-var form = d3.select("form")
-    .on("submit", function () { fetchAndDraw(this.wordInput.value, 2) });
+var fullGraph = requestFullGraphFromS3()
+var emptyGraph = JSON.parse("{\"nodes\": [], \"edges\": []}")
 
-function requestGraph(word, depth) {
+var form = d3.select("form")
+    .on("submit", function () { subgraphAndDraw(this.wordInput.value, 2) });
+
+function requestFullGraphFromS3() {
   var request = new XMLHttpRequest();
-  var rootPath = API_ROOT + ":8081/api/"
-  var uri = "?word=" + word + "&depth=" + depth;
-  console.log(rootPath + uri)
-  request.open("GET", rootPath + uri, false);
+  var path = S3_BUCKET + "etymograph.json"
+  console.log(path)
+  request.open("GET", path, false);
   request.send();
   return JSON.parse(request.responseText)
+}
+
+function getSubgraph(graph, word, depth) {
+  var foundWords = new Set([word]);
+  var currentDepth = 0;
+
+  while (currentDepth < depth) {
+    // Find all links matching any relevant word.
+    var links = graph.links.filter(function(item) {
+      if ((foundWords.has(item["source"])) || (foundWords.has(item["target"]))) {
+        return true
+      }
+      else {
+        return false
+      }
+    });
+    // Add all adjacent nodes to the set of relevant nodes.
+    links.forEach(function(edge){
+      foundWords.add(edge["source"]);
+      foundWords.add(edge["target"]);
+    });
+    currentDepth = currentDepth + 1
+  }
+
+  var nodes = Array.from(foundWords).map(function(word) { return {"id": word} })
+  var responseGraph = {
+    "nodes": nodes,
+    "links": links
+  };
+  return responseGraph;
 }
 
 function draw(graph, word){
@@ -62,15 +95,15 @@ function draw(graph, word){
     .attr("fill", function(d) { return color(d.group); })
 
   node.append("title")
-    .text(function(d) { return d.word; });
+    .text(function(d) { return d.id; });
 
   node.append("text")
     .attr("dx", 12)
     .attr("dy", ".35em")
-    .text(function(d) { return d.word });
+    .text(function(d) { return d.id });
 
   d3.selectAll(".node")
-    .filter(function(d) { return d.word === word })
+    .filter(function(d) { return d.id === word })
     .selectAll("circle")
       .style("fill", "orange")
 
@@ -105,7 +138,7 @@ function draw(graph, word){
   }
 
   function openLink(d, i) {
-    window.open("http://etymonline.com/word/" + d.word, '_blank')
+    window.open("http://etymonline.com/word/" + d.id, '_blank')
   }
 
   function dragstarted(d) {
@@ -126,13 +159,11 @@ function draw(graph, word){
   }
 }
 
-function fetchAndDraw(word, depth) {
+function subgraphAndDraw(word, depth) {
   if (d3.event !== null) {
     d3.event.preventDefault()
   }
-  var graph = requestGraph(word, depth)
+  var graph = getSubgraph(fullGraph, word, depth)
   d3.select("svg").remove()
   draw(graph, word)
 }
-
-fetchAndDraw("", 1);

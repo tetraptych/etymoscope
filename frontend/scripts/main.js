@@ -1,19 +1,25 @@
 var API_ROOT = "http://localhost"
 var S3_BUCKET = "https://s3-us-west-2.amazonaws.com/etymoscope-public/"
 
-var width = 900
-var height = 750
+var defaultWidth = 1000
+var defaultHeight = 700
+var minWidth = 1000
+var minHeight = 500
+var maxWidth = 1200
+var maxHeight = 1400
+
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var fullGraph = requestFullGraphFromS3()
 var emptyGraph = JSON.parse("{\"nodes\": [], \"edges\": []}")
 
 var form = d3.select("form")
-    .on("submit", function () { subgraphAndDraw(this.wordInput.value, 2) });
+    .on("submit", function () { getSubgraphAndDrawIt(this.wordInput.value, 2) });
 
 function requestFullGraphFromS3() {
+  // Get the full etymology graph from S3.
   var request = new XMLHttpRequest();
-  var path = S3_BUCKET + "etymograph.json"
+  var path = S3_BUCKET + "data/etymograph.json"
   console.log(path)
   request.open("GET", path, false);
   request.send();
@@ -21,6 +27,8 @@ function requestFullGraphFromS3() {
 }
 
 function getSubgraph(graph, word, depth) {
+  // Get the part of the graph within depth steps from word.
+  // TODO: Confirm that duplicate links are not included.
   var foundWords = new Set([word]);
   var currentDepth = 0;
 
@@ -50,7 +58,31 @@ function getSubgraph(graph, word, depth) {
   return responseGraph;
 }
 
-function draw(graph, word){
+function selectSatisfactoryDimensions(graph) {
+  // Choose SVG width and height, using the graph to assess what is reasonable.
+  var numNodes = graph.nodes.length;
+  if (numNodes < 20) {
+    var width = minWidth
+    var height = minHeight
+  }
+  else if (numNodes < 100) {
+    var width = defaultWidth
+    var height = defaultHeight
+  }
+  else {
+    var width = maxWidth
+    var height = maxHeight
+  }
+  return [width, height]
+}
+
+function draw(graph, word) {
+  // Draw a graph for the given word.
+  dimensions = selectSatisfactoryDimensions(graph)
+  var width = dimensions[0]
+  var height = dimensions[1]
+  var nodeRadius = 6
+
   d3.select("#d3-container")
     .append("svg")
     .attr("width", width)
@@ -87,19 +119,22 @@ function draw(graph, word){
     .data(graph.nodes)
     .enter().append("g")
     .attr("class", "node")
-    .on("click", setActive)
+    .on("click", onClick)
     .on("dblclick", openLink)
 
   node.append("circle")
-    .attr("r", function (d) { return 6; })
+    .attr("r", function (d) { return nodeRadius; })
     .attr("fill", function(d) { return color(d.group); })
 
   node.append("title")
     .text(function(d) { return d.id; });
 
+  var dxText = 12
+  var dyText = 6
+  var wordSizeInPixels = 80
   node.append("text")
-    .attr("dx", 12)
-    .attr("dy", ".35em")
+    .attr("dx", dxText)
+    .attr("dy", dyText)
     .text(function(d) { return d.id });
 
   d3.selectAll(".node")
@@ -114,31 +149,35 @@ function draw(graph, word){
     .on("tick", ticked)
 
   function ticked() {
+    node.
+      attr("cx", function(d) {
+        return d.x = Math.max(
+          nodeRadius + dxText,
+          Math.min(width - nodeRadius - dxText - wordSizeInPixels, d.x));
+      })
+      .attr("cy", function(d) {
+        return d.y = Math.max(
+          nodeRadius + dyText,
+          Math.min(height - nodeRadius - dyText - wordSizeInPixels, d.y));
+      });
+
     link
       .attr("x1", function(d) { return d.source.x; })
       .attr("y1", function(d) { return d.source.y; })
       .attr("x2", function(d) { return d.target.x; })
       .attr("y2", function(d) { return d.target.y; });
 
-    node
-      .attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; });
-
     node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
   }
 
-  function setActive(d, i) {
+  // Placeholder function for on-click behavior.
+  function onClick(d, i) {
     activeNodes.push(d3.select(this).node())
-    /*
-    d3.select(this).select("circle").transition()
-      .duration(750)
-      .attr("r", 16)
-      .style("fill", "orange")
-    */
   }
 
+  // Open a link to etymonline for the given word.
   function openLink(d, i) {
-    window.open("http://etymonline.com/word/" + d.id, '_blank')
+    window.open("https://www.etymonline.com/word/" + d.id, '_blank')
   }
 
   function dragstarted(d) {
@@ -159,7 +198,8 @@ function draw(graph, word){
   }
 }
 
-function subgraphAndDraw(word, depth) {
+// Find the subgraph corresponding to the word and depth and display it.
+function getSubgraphAndDrawIt(word, depth) {
   if (d3.event !== null) {
     d3.event.preventDefault()
   }

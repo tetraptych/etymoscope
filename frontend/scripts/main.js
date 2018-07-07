@@ -1,57 +1,62 @@
-var API_ROOT = "http://localhost"
-var S3_BUCKET = "https://s3-us-west-2.amazonaws.com/etymoscope-public/"
+const API_ROOT = "http://localhost"
+const S3_BUCKET = "https://s3-us-west-2.amazonaws.com/etymoscope-public/"
 
-var defaultWidth = 1000
-var defaultHeight = 700
-var minWidth = 1000
-var minHeight = 500
-var maxWidth = 1200
-var maxHeight = 1400
+const defaultWidth = 1000
+const defaultHeight = 700
+const minWidth = 1000
+const minHeight = 500
+const maxWidth = 1200
+const maxHeight = 1400
 
-var color = d3.scaleOrdinal(d3.schemeCategory20);
+const color = d3.scaleOrdinal(d3.schemeCategory20);
 
-var fullGraph = requestFullGraphFromS3()
-var emptyGraph = JSON.parse("{\"nodes\": [], \"edges\": []}")
+const fullGraph = requestFullGraphFromS3()
+const emptyGraph = JSON.parse("{\"nodes\": [], \"edges\": []}")
 
 var form = d3.select("form")
     .on("submit", function () { getSubgraphAndDrawIt(this.wordInput.value, 2) });
 
 function requestFullGraphFromS3() {
   // Get the full etymology graph from S3.
-  var request = new XMLHttpRequest();
-  var path = S3_BUCKET + "data/etymograph.json"
+  let request = new XMLHttpRequest();
+  let path = S3_BUCKET + "data/etymograph.json"
   console.log(path)
   request.open("GET", path, false);
   request.send();
   return JSON.parse(request.responseText)
 }
 
-function getSubgraph(graph, word, depth) {
+function getSubgraph(word, depth) {
   // Get the part of the graph within depth steps from word.
   // TODO: Confirm that duplicate links are not included.
-  var foundWords = new Set([word]);
-  var currentDepth = 0;
+  let foundWords = new Set([word]);
 
-  while (currentDepth < depth) {
+  for (let currentDepth = 0; currentDepth < depth; currentDepth++) {
     // Find all links matching any relevant word.
-    var links = graph.links.filter(function(item) {
-      if ((foundWords.has(item["source"])) || (foundWords.has(item["target"]))) {
-        return true
+    var relevantLinks = fullGraph["links"].filter(
+      function(item) {
+        if ((foundWords.has(item["source"])) || (foundWords.has(item["target"]))) {
+          return true
+        }
+        else {
+          return false
+        }
       }
-      else {
-        return false
-      }
-    });
+    );
     // Add all adjacent nodes to the set of relevant nodes.
-    links.forEach(function(edge){
+    relevantLinks.forEach(function(edge){
       foundWords.add(edge["source"]);
       foundWords.add(edge["target"]);
     });
-    currentDepth = currentDepth + 1
   }
 
-  var nodes = Array.from(foundWords).map(function(word) { return {"id": word} })
-  var responseGraph = {
+  // Create deep copies to avoid updating pieces of fullGraph while drawing.
+  let nodes = JSON.parse(JSON.stringify(
+    Array.from(foundWords).map(function(word) { return {"id": word} })
+  ));
+  let links = JSON.parse(JSON.stringify(Array.from(relevantLinks)));
+
+  let responseGraph = {
     "nodes": nodes,
     "links": links
   };
@@ -78,10 +83,10 @@ function selectSatisfactoryDimensions(graph) {
 
 function draw(graph, word) {
   // Draw a graph for the given word.
-  dimensions = selectSatisfactoryDimensions(graph)
-  var width = dimensions[0]
-  var height = dimensions[1]
-  var nodeRadius = 6
+  let dimensions = selectSatisfactoryDimensions(graph)
+  let width = dimensions[0]
+  let height = dimensions[1]
+  let nodeRadius = 6
 
   d3.select("#d3-container")
     .append("svg")
@@ -203,7 +208,7 @@ function getSubgraphAndDrawIt(word, depth) {
   if (d3.event !== null) {
     d3.event.preventDefault()
   }
-  var graph = getSubgraph(fullGraph, word, depth)
+  let graph = getSubgraph(word, depth)
   d3.select("svg").remove()
   draw(graph, word)
 }

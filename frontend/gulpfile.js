@@ -3,8 +3,11 @@ var gulp = require('gulp'),
     sass = require('gulp-sass'),
     coffee = require('gulp-coffee'),
     connect = require('gulp-connect'),
-    uglify = require('gulp-uglify'),
+    // uglify = require('gulp-uglify'),
     concat = require('gulp-concat');
+    uglifyes = require('uglify-es');
+    composer = require('gulp-uglify/composer');
+    uglify = composer(uglifyes, console);
 
 var coffeeSources = ['scripts/hello.coffee'],
     jsSources = ['scripts/*.js'],

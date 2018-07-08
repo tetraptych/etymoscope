@@ -11,7 +11,7 @@ const maxHeight = 1400
 const color = d3.scaleOrdinal(d3.schemeCategory20);
 
 const fullGraph = requestFullGraphFromS3()
-const emptyGraph = JSON.parse("{\"nodes\": [], \"edges\": []}")
+const emptyGraph = JSON.parse("{\"nodes\": [], \"links\": []}")
 
 var form = d3.select("form")
     .on("submit", function () { getSubgraphAndDrawIt(this.wordInput.value, 2) });
@@ -55,6 +55,12 @@ function getSubgraph(word, depth) {
     Array.from(foundWords).map(function(word) { return {"id": word} })
   ));
   let links = JSON.parse(JSON.stringify(Array.from(relevantLinks)));
+
+  // If no links were found, return nothing.
+  // This prevents a single node from being displayed when a word is not found.
+  if (links.length == 0) {
+    return emptyGraph
+  }
 
   let responseGraph = {
     "nodes": nodes,

@@ -29,6 +29,11 @@ function requestFullGraphFromS3() {
 function getSubgraph(word, depth) {
   // Get the part of the graph within depth steps from word.
   // TODO: Confirm that duplicate links are not included.
+  // If the word is not found, return nothing.
+  if (fullGraph.nodes.filter(function(item) { return (item.id == word) }).length == 0) {
+    return emptyGraph
+  }
+
   let foundWords = new Set([word]);
 
   for (let currentDepth = 0; currentDepth < depth; currentDepth++) {
@@ -55,13 +60,6 @@ function getSubgraph(word, depth) {
     Array.from(foundWords).map(function(word) { return {"id": word} })
   ));
   let links = JSON.parse(JSON.stringify(Array.from(relevantLinks)));
-
-  // If no links were found, return nothing.
-  // This prevents a single node from being displayed when a word is not found.
-  if (links.length == 0) {
-    return emptyGraph
-  }
-
   let responseGraph = {
     "nodes": nodes,
     "links": links

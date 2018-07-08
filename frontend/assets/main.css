@@ -29,6 +29,16 @@ canvas {
   padding: 6px;
   text-align: center; }
 
+.abouttext {
+  padding: 20px 0px; }
+
+.abouttext p {
+  float: left;
+  display: block;
+  text-align: left;
+  text-decoration: none;
+  font-size: 17px; }
+
 #submitButton {
   background: transparent;
   border: none;

@@ -20,7 +20,6 @@ function requestFullGraphFromS3() {
   let request = new XMLHttpRequest();
   let path = S3_BUCKET + "data/etymograph.json"
   request.open("GET", path, false);
-  request.setRequestHeader()
   request.send();
   return JSON.parse(request.responseText)
 }

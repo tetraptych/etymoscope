@@ -1,5 +1,4 @@
-const API_ROOT = "http://localhost"
-const S3_BUCKET = "https://s3-us-west-2.amazonaws.com/etymoscope-public/"
+const S3_BUCKET = "https://etymoscope.com/"
 
 const defaultWidth = 1000
 const defaultHeight = 700
@@ -20,8 +19,8 @@ function requestFullGraphFromS3() {
   // Get the full etymology graph from S3.
   let request = new XMLHttpRequest();
   let path = S3_BUCKET + "data/etymograph.json"
-  console.log(path)
   request.open("GET", path, false);
+  request.setRequestHeader()
   request.send();
   return JSON.parse(request.responseText)
 }

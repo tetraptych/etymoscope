@@ -15,7 +15,7 @@ h1 {
 
 .node circle {
   stroke: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 1.0px;
 }
 
 .node text {
@@ -29,6 +29,22 @@ canvas {
 
 form {
   padding: 20px;
+}
+
+svg-container {
+  display: block;
+  position: relative;
+  width: 90%;
+  padding-bottom: 100%; /* aspect ratio */
+  vertical-align: top;
+  overflow: hidden;
+  z-index: -1
+}
+
+.svg-content-responsive {
+  display: inline-block;
+  top: 10px;
+  left: 0;
 }
 
 .abouttext {

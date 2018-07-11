@@ -37,6 +37,11 @@ svg-container {
   top: 10px;
   left: 0; }
 
+.about-container {
+  padding: 20px 0px;
+  margin-left: 4%;
+  margin-right: 4%; }
+
 .abouttext {
   padding: 20px 0px;
   margin-left: auto;

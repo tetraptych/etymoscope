@@ -198,7 +198,7 @@ function draw(graph, word) {
 // Find the subgraph corresponding to the word and depth and display it.
 function getSubgraphAndDrawIt(word, depth) {
   if (d3.event !== null) {
-    d3.event.preventDefault()
+    d3.event.preventDefault();
   }
   let graph = getSubgraph(word, depth)
   // Remove svg if one exists.

@@ -16,39 +16,20 @@ h1 {
   pointer-events: none;
   font: 10px sans-serif; }
 
-input,
 canvas {
   position: absolute; }
 
-#wordInput {
-  background: transparent;
-  border: none;
-  margin: 10px 384px;
-  width: 160px;
-  font-size: 18px;
-  padding: 6px;
-  text-align: center; }
+form {
+  padding: 20px; }
 
 .abouttext {
-  padding: 20px 0px; }
+  padding: 20px 0px;
+  margin-left: auto;
+  margin-right: auto; }
 
 .abouttext p {
-  float: left;
-  display: block;
   text-align: left;
-  text-decoration: none;
   font-size: 17px; }
-
-#submitButton {
-  background: transparent;
-  border: none;
-  font-size: 18px;
-  text-align: center;
-  margin: 10px 550px;
-  padding: 6px; }
-
-#formRow {
-  padding-bottom: 50px; }
 
 .footer {
   left: 0;

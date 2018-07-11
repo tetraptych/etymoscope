@@ -1,7 +1,7 @@
 const S3_BUCKET = "https://etymoscope.com/"
 
 const defaultWidth = 1000
-const defaultHeight = 700
+const defaultHeight = 800
 const minWidth = 1000
 const minHeight = 500
 const maxWidth = 1200

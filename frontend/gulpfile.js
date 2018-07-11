@@ -42,7 +42,9 @@ gulp.task('coffee', function() {
 
 gulp.task('js', function() {
   gulp.src(jsSources)
-  .pipe(uglify())
+  .pipe(uglify({
+    mangle: {safari10: true}
+  }))
   .pipe(concat('script.js'))
   .pipe(gulp.dest(outputDir))
   .pipe(connect.reload())

@@ -1,11 +1,6 @@
 const S3_BUCKET = "https://etymoscope.com/"
 
 const defaultWidth = 1000
-const defaultHeight = 800
-const minWidth = 1000
-const minHeight = 500
-const maxWidth = 1200
-const maxHeight = 1400
 
 const color = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -68,18 +63,8 @@ function getSubgraph(word, depth) {
 function selectSatisfactoryDimensions(graph) {
   // Choose SVG width and height, using the graph to assess what is reasonable.
   var numNodes = graph.nodes.length;
-  if (numNodes < 20) {
-    var width = minWidth
-    var height = minHeight
-  }
-  else if (numNodes < 100) {
-    var width = defaultWidth
-    var height = defaultHeight
-  }
-  else {
-    var width = maxWidth
-    var height = maxHeight
-  }
+  var width = defaultWidth;
+  var height = Math.min(Math.round(3 * numNodes + 450), 1600);
   return [width, height]
 }
 
@@ -88,12 +73,17 @@ function draw(graph, word) {
   let dimensions = selectSatisfactoryDimensions(graph)
   let width = dimensions[0]
   let height = dimensions[1]
-  let nodeRadius = 6
+  let nodeRadius = 5
+
+  let viewBoxStr = "0 0 " + width + " " + height
 
   d3.select("#d3-container")
+    .append("div")
+    .classed("svg-container", true)
     .append("svg")
-    .attr("width", width)
-    .attr("height", height)
+    .attr("preserveAspectRatio", "xMinYMin meet")
+    .attr("viewBox", viewBoxStr)
+    .classed("svg-content-responsive", true);
 
   var svg = d3.select("svg")
 
@@ -101,8 +91,8 @@ function draw(graph, word) {
       .force("link", d3.forceLink()
         .id(function(d) { return d.id; })
         .links(graph.links)
-        .distance(15)
-        .strength(1.0)
+        .distance(10)
+        .strength(1.2)
       )
       .force("charge", d3.forceManyBody()
         .strength(-800)
@@ -112,7 +102,7 @@ function draw(graph, word) {
         .strength(1.0)
         .radius(8)
       )
-      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("center", d3.forceCenter(width / 2, height / 2.5))
   ;
 
   var link = svg.append("g")
@@ -211,6 +201,9 @@ function getSubgraphAndDrawIt(word, depth) {
     d3.event.preventDefault()
   }
   let graph = getSubgraph(word, depth)
-  d3.select("svg").remove()
+  // Remove svg if one exists.
+  if (d3.select("svg")) {
+    d3.select("svg").remove()
+  }
   draw(graph, word)
 }

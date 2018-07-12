@@ -10,7 +10,7 @@
 
   <link rel="icon" type="image/x-icon" href="favicon.ico?v=2"/>
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="main.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -18,10 +18,19 @@
 
 <body>
 
-  <div class="topnav" id="myTopnav">
-    <a href="/" class="active">Home</a>
-    <a href="about.html">About</a>
-  </div>
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">Etymoscope</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="active" id="nav-item-active"><a href="/">Home</a></li>
+          <li><a href="/about.html">About</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
   <div class="container">
     <div class="row text-center">

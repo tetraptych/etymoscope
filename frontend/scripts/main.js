@@ -1,7 +1,6 @@
 const S3_BUCKET = "https://etymoscope.com/"
 
 const defaultWidth = 1000
-
 const color = d3.scaleOrdinal(d3.schemeCategory20);
 
 const fullGraph = requestFullGraphFromS3()
@@ -64,26 +63,46 @@ function selectSatisfactoryDimensions(graph) {
   // Choose SVG width and height, using the graph to assess what is reasonable.
   var numNodes = graph.nodes.length;
   var width = defaultWidth;
-  var height = Math.min(Math.round(3 * numNodes + 450), 1600);
+  var height = Math.min(Math.round(3 * numNodes + 500), 1600);
   return [width, height]
+}
+
+function getViewportWidth() {
+  return d3.select("#d3-container").node().getBoundingClientRect().width
 }
 
 function draw(graph, word) {
   // Draw a graph for the given word.
-  let dimensions = selectSatisfactoryDimensions(graph)
-  let width = dimensions[0]
-  let height = dimensions[1]
-  let nodeRadius = 5
+  var dimensions = selectSatisfactoryDimensions(graph)
+  var targetWidth = dimensions[0]
+  var targetHeight = dimensions[1]
+  var nodeRadius = 5
 
-  let viewBoxStr = "0 0 " + width + " " + height
+  var viewportWidth = getViewportWidth()
 
-  d3.select("#d3-container")
-    .append("div")
-    .classed("svg-container", true)
-    .append("svg")
-    .attr("preserveAspectRatio", "xMinYMin meet")
-    .attr("viewBox", viewBoxStr)
-    .classed("svg-content-responsive", true);
+  // Allow mobile devices to scroll horizontally.
+  // All other devices fit
+  if (viewportWidth < 500) {
+    var trueWidth = 1.4 * viewportWidth;
+    var trueHeight = 2.0 * trueWidth / targetWidth * targetHeight;
+    d3.select("#d3-container")
+      .append("div")
+      .classed("svg-container", true)
+      .append("svg")
+      .attr("width",  trueWidth)
+      .attr("height", trueHeight);
+  }
+  else {
+    var trueWidth = targetWidth;
+    var trueHeight = targetHeight;
+    d3.select("#d3-container")
+      .append("div")
+      .classed("svg-container", true)
+      .append("svg")
+      .attr("preserveAspectRatio", "xMinYMin meet")
+      .attr("viewBox", "0 0 " + targetWidth + " " + targetHeight)
+      .classed("svg-content-responsive", true);
+  }
 
   var svg = d3.select("svg")
 
@@ -102,7 +121,7 @@ function draw(graph, word) {
         .strength(1.0)
         .radius(8)
       )
-      .force("center", d3.forceCenter(width / 2, height / 2.5))
+      .force("center", d3.forceCenter(trueWidth / 2, trueHeight / 2.5))
   ;
 
   var link = svg.append("g")
@@ -150,12 +169,12 @@ function draw(graph, word) {
       attr("cx", function(d) {
         return d.x = Math.max(
           nodeRadius + dxText,
-          Math.min(width - nodeRadius - dxText - wordSizeInPixels, d.x));
+          Math.min(trueWidth - nodeRadius - dxText - wordSizeInPixels, d.x));
       })
       .attr("cy", function(d) {
         return d.y = Math.max(
           nodeRadius + dyText,
-          Math.min(height - nodeRadius - dyText - wordSizeInPixels, d.y));
+          Math.min(trueHeight - nodeRadius - dyText - wordSizeInPixels, d.y));
       });
 
     link
@@ -202,8 +221,8 @@ function getSubgraphAndDrawIt(word, depth) {
   }
   let graph = getSubgraph(word, depth)
   // Remove svg if one exists.
-  if (d3.select("svg")) {
-    d3.select("svg").remove()
+  if (d3.select("div.svg-container")) {
+    d3.select("div.svg-container").remove();
   }
   draw(graph, word)
 }

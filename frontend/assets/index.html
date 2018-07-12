@@ -18,19 +18,29 @@
 
 <body>
 
-  <nav class="navbar navbar-default navbar-static-top">
+  <header class="navbar navbar-inverse navbar-static-top bs-docs-nav" role="banner">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="/">Etymoscope</a>
+        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="./" class="navbar-brand">Etymoscope</a>
       </div>
-      <div id="navbar" class="navbar-collapse collapse">
+      <nav class="navbar-collapse bs-navbar-collapse collapse" role="navigation">
         <ul class="nav navbar-nav">
-          <li class="active" id="nav-item-active"><a href="/">Home</a></li>
-          <li><a href="/about.html">About</a></li>
+          <li class="active">
+            <a href="/">Home</a>
+          </li>
+          <li>
+            <a href="/about.html">About</a>
+          </li>
         </ul>
-      </div>
+      </nav>
     </div>
-  </nav>
+  </header>
 
   <div class="container">
     <div class="row text-center">
@@ -57,5 +67,6 @@
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="script.js"></script>
 </html>

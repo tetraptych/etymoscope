@@ -88,7 +88,7 @@ svg-container {
   background-color: #222222
 }
 .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
-  background-color: #428BCA
+  background-color: #F5F5F5;
 }
 
 .navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .open > a,.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
@@ -111,7 +111,6 @@ svg-container {
   background-image: none;
 }
 
-
 .navbar-inverse .navbar-brand {
   color: #F5F5F5
 }
@@ -130,13 +129,13 @@ svg-container {
 }
 
 .navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
-  color: #F5F5F5
+  color: #222222
 }
 .navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open> a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
   color: #FFFFFF
 }
 .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
-  color: #F5F5F5
+  color: #222222
 }
 
 .dropdown-menu > li > a {
